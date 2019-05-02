@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>TF tests</title>
+
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.11.2"> </script>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"></script> -->
+	<script src="sketch.js"></script>
+</head>
+<body>
+<canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+
+<br>
+<br>
+<p id="while-training-text"> Will become available once training is done</p>
+<input type="checkbox" onclick="display_data()" id="check-numbers" value="numbers" disabled> Numbers<br>
+<br>
+<br>
+First Datapoint<br>
+<input id="first-data" type="text">
+<br>
+Second Datapoint:<br>
+<input id="second-data" type="text">
+<br>
+<input id="confirm" type="button" value="predict" onclick="predict_inputs_ad_hoc()">
+
+</body>
+</html>
