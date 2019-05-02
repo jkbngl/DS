@@ -18,7 +18,7 @@ model.add(hidden);
 model.add(output);
 
 // An optimizer using adam
-const optimizer = tf.train.sgd(0.1);
+const optimizer = tf.train.adam(0.1);
 
 model.compile({
   optimizer: optimizer,
@@ -137,7 +137,7 @@ train().then(() => {
 });
 
 async function train() {
-  let period = 4000;
+  let period = 200;
 
   for (let i = 0; i <= period; i++) {
     // config for training
