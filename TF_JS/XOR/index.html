@@ -12,8 +12,25 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"></script> -->
 	<script src="sketch.js"></script>
 </head>
+<style>
+	#myProgress {
+		width: 100%;
+		background-color: #ddd;
+	}
+		
+	#myBar {
+		width: 1%;
+		height: 30px;
+		background-color: black;
+	}
+</style>
 <body>
-<canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;">
+<div id="myProgress">
+	<div id="myBar"></div>
+</div>
+			  
+
+<canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3; margin-top: 2%">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
 
@@ -23,13 +40,12 @@ Your browser does not support the HTML5 canvas tag.</canvas>
 <input type="checkbox" onclick="display_data()" id="check-numbers" value="numbers" disabled> Numbers<br>
 <br>
 <br>
-First Datapoint<br>
-<input id="first-data" type="text">
-<br>
-Second Datapoint:<br>
-<input id="second-data" type="text">
+
+<p>Make an ad hoc prediction</p>
+<input id="first-data" type="text"> First Datapoint<br> 
+<input id="second-data" type="text"> Second Datapoint:<br>
 <br>
 <input id="confirm" type="button" value="predict" onclick="predict_inputs_ad_hoc()">
-
+<p id="predict-output"></p>
 </body>
 </html>

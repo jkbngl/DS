@@ -133,11 +133,11 @@ train().then(() => {
   display_data();
 
   // send a message that everything is done
-  // send_message();
+  //send_message();
 });
 
 async function train() {
-  let period = 200;
+  let period = 1000;
 
   for (let i = 0; i <= period; i++) {
     // config for training
@@ -152,6 +152,8 @@ async function train() {
     // Display the progress of the training
     if(i % 100 == 0 && i != 0)
       console.log( (i / 100) + " / " + (period / 100) + ": " +response.history.loss[0]);
+
+    move((i / period)*100);
   }
 }
 
@@ -172,27 +174,25 @@ function predict_inputs_ad_hoc()
 
   // predict by the given inputs
   let outputs = model.predict(ps);
-  outputs.print();
+  
+  document.getElementById("predict-output").innerHTML = outputs.dataSync();
 }
 
-/*function send_message()
+function move(percent_to_move) 
 {
-  var TelegramBot = require('telegrambot');
-  var api = new TelegramBot('<YOUR TOKEN HERE>');
+  var elem = document.getElementById("myBar");   
+  elem.style.width = percent_to_move + '%'; 
+}
 
-  // You can either use getUpdates or setWebHook to retrieve updates.
-  // getUpdates needs to be done on an interval and will contain all the 
-  // latest messages send to your bot.
+function send_message()
+{
+  const TelegramBot = require('node-telegram-bot-api');
 
-  // Update the offset to the last receive update_id + 1
-  api.invoke('getUpdates', { offset: 0 }, function (err, updates) {
-      if (err) throw err;
-      console.log(updates);
-  });
+  // replace the value below with the Telegram token you receive from @BotFather
+  const token = '802113499:AAF09QJDBSpkwzajMEdowPmr7f_yc5S6TbE';
 
-  // The chat_id received in the message update
-  api.invoke('sendMessage', { chat_id: <chat_id>, text: 'my message' }, function (err, message) {
-      if (err) throw err;
-      console.log(message);
-  });
-}*/
+  // Create a bot that uses 'polling' to fetch new updates
+  const bot = new TelegramBot(token, {polling: true});
+
+  bot.sendMessage('-353232539', 'Received your message');
+}
