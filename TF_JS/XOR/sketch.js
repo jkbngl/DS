@@ -192,6 +192,7 @@ function move(percent_to_move)
 {
   var elem = document.getElementById("myBar");   
   elem.style.width = percent_to_move + '%'; 
+  elem.innerHTML = "&nbsp;" + percent_to_move.toFixed(2) + "%"; 
   // elem.innerHTML = percent_to_move * 1 + '%';
 }
 
