@@ -28,7 +28,10 @@
 <div id="myProgress">
 	<div id="myBar"></div>
 </div>
-			  
+
+<br>
+<input id="confirm" type="button" value="Finish Training" onclick="set_period(0)">			 
+<br>
 
 <canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3; margin-top: 2%">
 Your browser does not support the HTML5 canvas tag.</canvas>
@@ -42,7 +45,7 @@ Your browser does not support the HTML5 canvas tag.</canvas>
 <br>
 
 <p>Make an ad hoc prediction</p>
-<input id="first-data" type="text"> First Datapoint<br> 
+<input id="first-data" type="text"> First Datapoint:<br> 
 <input id="second-data" type="text"> Second Datapoint:<br>
 <br>
 <input id="confirm" type="button" value="predict" onclick="predict_inputs_ad_hoc()">

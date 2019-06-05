@@ -18,7 +18,7 @@ model.add(hidden);
 model.add(output);
 
 // An optimizer using adam
-const optimizer = tf.train.adam(0.1);
+const optimizer = tf.train.adam(0.5);
 
 model.compile({
   optimizer: optimizer,
@@ -41,8 +41,19 @@ const ys = tf.tensor2d([
   [0]
 ]);
 
+
+
+// amount of period - made global to set it to 0 when cancel training button is clicked
+let period = 1000;
+
 // output arr to display the data in the canvas
 let output_arr = [];
+
+function set_period(i)
+{
+  period = i;
+}
+
 
 // function to fill an array with data that will be used for testing
 function fill_predict_tensor()
@@ -129,7 +140,6 @@ train().then(() => {
   // after training is done allow to change the display format
   set_buttons_active();
 
-  // display the data
   display_data();
 
   // send a message that everything is done
@@ -137,15 +147,15 @@ train().then(() => {
 });
 
 async function train() {
-  let period = 1000;
+  
+
+  // config for training
+  const config = {
+    shuffle: true,
+    epochs: 10
+  }
 
   for (let i = 0; i <= period; i++) {
-    // config for training
-    const config = {
-      shuffle: true,
-      epochs: 10
-    }
-
     // Actual training
     const response = await model.fit(xs, ys, config);
 
@@ -182,10 +192,12 @@ function move(percent_to_move)
 {
   var elem = document.getElementById("myBar");   
   elem.style.width = percent_to_move + '%'; 
+  // elem.innerHTML = percent_to_move * 1 + '%';
 }
 
 function send_message()
 {
+  // https://api.telegram.org/bot802113499:AAF09QJDBSpkwzajMEdowPmr7f_yc5S6TbE/getUpdates
   const TelegramBot = require('node-telegram-bot-api');
 
   // replace the value below with the Telegram token you receive from @BotFather
