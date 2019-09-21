@@ -3,6 +3,8 @@
 * Fuel usage
 * Tickets issued
 * Electric car motor temperature
+* Kidney diseasess
+* New York airbnb data
 
 # Methods used
   * EDA
