@@ -27,8 +27,8 @@
 ## Find optimal size of clusters with elbow method
 ![alt text](https://raw.githubusercontent.com/jkbngl/DS/master/img/elbow_method.png)
 
-## Visualize 3 dimensional clusters
-![alt text](https://raw.githubusercontent.com/jkbngl/DS/master/img/3d_cluster.png)
+## Visualize 3 - 5 dimensional clusters
+![alt text](https://raw.githubusercontent.com/jkbngl/DS/master/img/3d_cluster_2.png)
 
 ## Automate the process of hypertuning params
 ![alt text](https://raw.githubusercontent.com/jkbngl/DS/master/img/automated_hypertuning.png)
