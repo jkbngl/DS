@@ -13,4 +13,4 @@ COPY ./app/ ./
 
 #CMD [ "python3", "./server.py" ]
 
-CMD [ "streamlit", "hello" ] 
+CMD [ "streamlit", "run", "server.py" ]
