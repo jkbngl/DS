@@ -1,13 +1,11 @@
 
-def query_builder(categories, timeframes, valCols, dateCols):
+def query_builder(categories, timeframes, valCol, aggregationType, dateCol, table, condition):
 
     queries = []
 
     for col in categories:
 
-        for val in valCols:
-            for date in dateCols:
-                for timeframe in timeframes:
-                    queries.append(
-                        f'select {", ".join(col)}, {", ".join(col)} from table group by {", ".join(col)} order by {date} limit {timeframe}')
+        for timeframe in timeframes:
+            queries.append(
+                       f'select {", ".join(col)}, {dateCol}, {aggregationType}({valCol}) as {valCol}  from {table} {condition} group by {", ".join(col)}, {dateCol} order by {dateCol} limit {timeframe}')
     return queries
