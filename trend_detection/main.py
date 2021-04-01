@@ -7,8 +7,9 @@ import utils
 
 table = '-'
 
-columns = ['-', '-']
-categoryCombinations = iterator.combinations([col for col in columns if col.endswith('__category')])
+columns = [{'level': 1, 'key': '-'}, {'level': 2, 'key': '-'}]
+categoryCombinations = iterator.combinations(
+    [col for col in columns if col.endswith('__category')])
 
 valCol = '-'
 aggregationType = 'sum'
@@ -19,7 +20,7 @@ condition = "where - = '-'"
 timeframes = [5, 14, 21, 30, 60, 90, 180]
 
 queries = query_builder.query_builder(
-   categoryCombinations, timeframes, valCol, aggregationType, dateCol, table, condition)
+    categoryCombinations, timeframes, valCol, aggregationType, dateCol, table, condition)
 
 for query in queries:
     print(query)
@@ -36,7 +37,8 @@ for query in queries:
     s = pd.Series(vals)
     #s = s.rolling(10, min_periods=1).mean()
 
-    trend, h, p, z, Tau, s, var_s, slope, intercept = trend_detector.trend_detector(s)
+    trend, h, p, z, Tau, s, var_s, slope, intercept = trend_detector.trend_detector(
+        s)
 
     print(s)
     print(trend)
