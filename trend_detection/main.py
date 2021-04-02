@@ -6,16 +6,16 @@ import connector
 import utils
 
 
-#columns = [{'level': 1, 'key': '-'}, {'level': 2, 'key': '-'}]
-
 config = {
     'table': '-',
     'columns': ['-', '-'],
+    'columns_level': [{'level': 1, 'key': '-'}, {'level': 2, 'key': '-'}],
     'valCol': '-',
     'aggregationType': 'sum',
     'dateCol': '-',
     'condition': "where - = '-'",
-    'timeframes': [5, 14, 21, 30, 60, 90, 180]
+    'timeframes': [5, 14, 21, 30, 60, 90, 180],
+    'db_type': 'postgres'
 }
 
 categoryCombinations = iterator.combinations(
@@ -28,7 +28,7 @@ queries = query_builder.query_builder(
 for query in queries:
     print(query)
 
-    cursor = connector.getConnection()
+    cursor = connector.getConnection(config.get('db_type'))
 
     cursor.execute(query)
     record = cursor.fetchall()
