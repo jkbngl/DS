@@ -5,25 +5,25 @@ import pandas as pd
 import connector
 import utils
 
-table = '-'
 
 #columns = [{'level': 1, 'key': '-'}, {'level': 2, 'key': '-'}]
 
+config = {
+    'table': '-',
+    'columns': ['-', '-'],
+    'valCol': '-',
+    'aggregationType': 'sum',
+    'dateCol': '-',
+    'condition': "where - = '-'",
+    'timeframes': [5, 14, 21, 30, 60, 90, 180]
+}
 
-columns = ['-', '-']
 categoryCombinations = iterator.combinations(
-    [col for col in columns if col.endswith('__category')])
+    [col for col in config.get('columns') if col.endswith('__category')])
 
-valCol = '-'
-aggregationType = 'sum'
-dateCol = '-'
-
-condition = "where - = '-'"
-
-timeframes = [5, 14, 21, 30, 60, 90, 180]
 
 queries = query_builder.query_builder(
-    categoryCombinations, timeframes, valCol, aggregationType, dateCol, table, condition)
+    categoryCombinations, config.get('timeframes'), config.get('valCol'), config.get('aggregationType'), config.get('dateCol'), config.get('table'), config.get('condition'))
 
 for query in queries:
     print(query)
@@ -36,7 +36,7 @@ for query in queries:
 
     cursor.close()
 
-    vals = [float(res.get(valCol)) for res in result]
+    vals = [float(res.get(config.get('valCol'))) for res in result]
     s = pd.Series(vals)
     #s = s.rolling(10, min_periods=1).mean()
 
