@@ -7,7 +7,10 @@ import utils
 
 table = '-'
 
-columns = [{'level': 1, 'key': '-'}, {'level': 2, 'key': '-'}]
+#columns = [{'level': 1, 'key': '-'}, {'level': 2, 'key': '-'}]
+
+
+columns = ['-', '-']
 categoryCombinations = iterator.combinations(
     [col for col in columns if col.endswith('__category')])
 
