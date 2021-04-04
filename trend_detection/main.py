@@ -7,23 +7,32 @@ import utils
 
 
 config = {
-    'table': '-',
-    'columns': ['-', '-'],
-    'columns_level': [{'level': 1, 'key': '-'}, {'level': 2, 'key': '-'}],
-    'valCol': '-',
+    'table': 'ffd.act_data',
+    'columns_level': [{'level': 1, 'key': 'year'}, {'level': 2, 'key': 'month'}, {'level': 3, 'key': 'level1'}],
+    'valCol': 'amount',
     'aggregationType': 'sum',
-    'dateCol': '-',
-    'condition': "where - = '-'",
+    'dateCol': "data_date",
+    'condition': "where level1 = 'EATING OUT'",
     'timeframes': [5, 14, 21, 30, 60, 90, 180],
-    'db_type': 'postgres'
+    'db_type': 'postgres',
+    'columns': ['level1', 'level2'],
 }
 
+where_conditions = query_builder.where_builder(config.get(
+    'columns'), config.get('table'), config.get('condition'))
+
+
 categoryCombinations = iterator.combinations(
-    [col for col in config.get('columns') if col.endswith('__category')])
+    [col for col in config.get('columns')])
 
 
 queries = query_builder.query_builder(
     categoryCombinations, config.get('timeframes'), config.get('valCol'), config.get('aggregationType'), config.get('dateCol'), config.get('table'), config.get('condition'))
+
+
+print('#')
+print(queries)
+print(categoryCombinations)
 
 for query in queries:
     print(query)
