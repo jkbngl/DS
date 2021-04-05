@@ -53,19 +53,18 @@ def where_builder(cols, table, where_condition, db_type):
         vals = df.drop_duplicates(keys)
         print('+++++++++')
         print(vals[keys])
-        print("for")
-        print(keys)
 
-    """
-    print(set(map(lambda x: x.get('site'), combinations)))
-    print(set(map(lambda x: f"{x.get('site')}-{x.get('orgarea')}", combinations)))
-    print(set(map(lambda x: f"{x.get('site')}-{x.get('orgarea')}-{x.get('machinegroup')}", combinations)))
-    """
+        for index, row in vals.iterrows():
+            query = 'where 1 = 1'
 
-    # site = 'BRU'
-    # site = 'BRU' and orgarea = 'PMS'
-    # site = 'BRU' and orgarea = 'FTT'
-    # site = 'BRU' and orgarea = 'PMS' and machinegroup = 'APH150'
-    # site = 'BRU' and orgarea = 'FTT' and machinegroup = 'APH150'
+            print('~~~~~~~~~')
+            print(row)
 
-    return combinations
+            for j, key in enumerate(keys):
+                query += f" and {key} = '{row.get(key)}'"
+
+            queries.append(query)
+
+    print(queries)
+
+    return queries
