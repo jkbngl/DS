@@ -1,3 +1,7 @@
+import connector
+import utils
+import pandas as pd
+
 
 def query_builder(categories, timeframes, valCol, aggregationType, dateCol, table, condition):
 
@@ -11,8 +15,57 @@ def query_builder(categories, timeframes, valCol, aggregationType, dateCol, tabl
     return queries
 
 
-def where_builder(cols, table, where_condition):
+def get_wheres(cols, table, where_condition, db_type):
+    cursor = connector.getConnection(db_type)
 
     query = f'select distinct {", ".join(cols)} from {table} {where_condition}'
 
-    return []
+    print(query)
+
+    cursor.execute(query)
+    record = cursor.fetchall()
+    result = utils.transformToKeyValue(cursor, record)
+
+    cursor.close()
+
+    return result
+
+
+def where_builder(cols, table, where_condition, db_type):
+
+    combinations_ = get_wheres(cols, table, where_condition, db_type)
+
+    combinations = [
+        {'site': 'BRU', 'orgarea': 'PMS', 'machinegroup': 'APH150'},
+        {'site': 'BRU', 'orgarea': 'FTT', 'machinegroup': 'APH150'},
+    ]
+
+    keys = []
+    queries = []
+
+    for i in range(0, len(combinations[0].keys())):
+        res = list(combinations[0].keys())[i]
+
+        keys.append(res)
+
+        df = pd.DataFrame(combinations)
+
+        vals = df.drop_duplicates(keys)
+        print('+++++++++')
+        print(vals[keys])
+        print("for")
+        print(keys)
+
+    """
+    print(set(map(lambda x: x.get('site'), combinations)))
+    print(set(map(lambda x: f"{x.get('site')}-{x.get('orgarea')}", combinations)))
+    print(set(map(lambda x: f"{x.get('site')}-{x.get('orgarea')}-{x.get('machinegroup')}", combinations)))
+    """
+
+    # site = 'BRU'
+    # site = 'BRU' and orgarea = 'PMS'
+    # site = 'BRU' and orgarea = 'FTT'
+    # site = 'BRU' and orgarea = 'PMS' and machinegroup = 'APH150'
+    # site = 'BRU' and orgarea = 'FTT' and machinegroup = 'APH150'
+
+    return combinations

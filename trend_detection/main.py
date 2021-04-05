@@ -8,19 +8,21 @@ import utils
 
 config = {
     'table': 'ffd.act_data',
-    'columns_level': [{'level': 1, 'key': 'year'}, {'level': 2, 'key': 'month'}, {'level': 3, 'key': 'level1'}],
+    'columns_level': [{'level': 1, 'key': 'level1'}, {'level': 2, 'key': 'level2'}, {'level': 3, 'key': 'level3'}],
     'valCol': 'amount',
     'aggregationType': 'sum',
     'dateCol': "data_date",
     'condition': "where level1 = 'EATING OUT'",
     'timeframes': [5, 14, 21, 30, 60, 90, 180],
     'db_type': 'postgres',
-    'columns': ['level1', 'level2'],
+    'columns': ['level1', 'level2', 'level3'],
 }
 
-where_conditions = query_builder.where_builder(config.get(
-    'columns'), config.get('table'), config.get('condition'))
+where_conditions = query_builder.where_builder(config.get('columns'), config.get(
+    'table'), config.get('condition'), config.get('db_type'))
 
+
+print(where_conditions)
 
 categoryCombinations = iterator.combinations(
     [col for col in config.get('columns')])
