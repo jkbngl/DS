@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+ streamlit_stint_calc:
+    build: .
+    image: streamlit:0.0.1
+    volumes:
+      - ./app:/usr/src/app
+      - ./config.ini:/usr/src/app/config.ini
+    environment:
+      - PORT=5000
+    ports:
+      - "5002:8501"
+    container_name: streamlit_skills
+    restart: unless-stopped
