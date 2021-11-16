@@ -11,18 +11,13 @@ st.set_page_config(
     page_title="Stint Calculation",
     page_icon="🧊",
     layout="wide",
-    initial_sidebar_state="expanded",
-    menu_items={
-        'Get Help': 'https://www.extremelycoolapp.com/help',
-        'Report a bug': "https://www.extremelycoolapp.com/bug",
-        'About': "# This is a header. This is an *extremely* cool app!"
-    }
+    initial_sidebar_state="expanded"
 )
 
 st.title('Stint Calculation')
 
 strats = st.sidebar.multiselect('Strats to simulate', ['avoid_low_tire', 'minimize_low_tire', 'least_stops'], [
-                                'avoid_low_tire', 'minimize_low_tire', 'least_stops'])
+                                'avoid_low_tire', 'minimize_low_tire', 'least_stops'], help='The possible strategies:\nEither avoid at any cost that you have to drive in low tires.\nTo stop in the round where you have to low tires - finishing the current round.\nNot to watch for tires at all and just stop when fuel is needed.')
 
 
 __tires_perc_problem__ = .30
@@ -31,31 +26,31 @@ __tire_change_sec__ = 3
 __l_per_sec__ = 5
 
 st.sidebar.write(
-    f"Percentage at which tires get worse {__tires_perc_problem__ * 100}")
+    f"Percentage at which tires get worse {__tires_perc_problem__ * 100}%")
 st.sidebar.write(
-    f"With how much litres of fuel do you start {__fuel_amount_start__}")
-st.sidebar.write(f"How long does a tire stop take [sec] {__tire_change_sec__}")
-st.sidebar.write(f"Litres of found refueled per second {__l_per_sec__}")
+    f"With how much litres of fuel do you start: {__fuel_amount_start__}l")
+st.sidebar.write(f"How long does a tire stop take: {__tire_change_sec__}sec")
+st.sidebar.write(f"Litres of found refueled per second: {__l_per_sec__}l")
 
 overall_rounds = st.slider(
-    "How many rounds do you drive:", 0, 100, 60)
+    "How many rounds do you drive:", 0, 100, 60, help='How many rounds the race has')
 
 tire_per_round = st.slider(
-    "How many percent of tire loss do you have per round:", 0, 40, 12)
+    "How many percent of tire loss do you have per round:", 0, 40, 12, help='How many percent your tires decrease in a single race pace round')
 fuel_per_round = st.slider(
-    "How many litres of fuel do you need per round", 0, 40, 10)
+    "How many litres of fuel do you need per round", 0, 40, 10, help='How many litres of fuel do you need in a single race pace round')
 
 round_duration_sec = st.slider(
-    "How long does a round on good tires take [sec]", 0, 300, 51)
+    "How long does a round on good tires take [sec]", 0, 300, 51, help='Expected round duration in race pace')
 pit_stop_delta_time = st.slider(
-    "How much seconds are lost if you pit:", 0, 40, 20)
+    "How much seconds are lost if you pit:", 0, 40, 20, help='The time from entering the pit lane until leaving it, in comparison if you drive the normal way')
 
 
 secs_lost_with_tires_low_per_round = st.slider(
-    "How much are you losing if you are driving on low tires [sec per round]", 0, 40, 5)
+    "How much are you losing if you are driving on low tires [sec per round]", 0, 40, 5, help='In seconds, how much slower you can drive if you have bad tires (< 30 %)')
 
 fuel_safety = st.number_input(
-    "How much extra fuel to calculate for the last stint:", 0, 20, 4)
+    "How much extra fuel to calculate for the last stint:", 1, 20, 4, help='How many litres of fuel should we safe calculate to have over at the end for unexpected reasons, e.g. sudden rain stop')
 
 rounds_fuel = math.floor(100 / fuel_per_round)
 rounds_tires = math.floor(100 / tire_per_round)
@@ -80,7 +75,7 @@ def getFuelToRefuel(rounds_left, fuel_per_round, fuel_safety, current_fuel_perce
 
 def doPitStop(fuel_percent, tire_percent, last_stop_round, df, reason):
 
-    #print(f"PITSPOT in round: {current_round} (last stop in: {last_stop_round}) due to __{reason}__")
+    # print(f"PITSPOT in round: {current_round} (last stop in: {last_stop_round}) due to __{reason}__")
 
     rounds_left = (overall_rounds) - current_round
     fuel_calculated = getFuelToRefuel(
@@ -90,7 +85,7 @@ def doPitStop(fuel_percent, tire_percent, last_stop_round, df, reason):
     sec_lost_with_low_tire, rounds_with_low_tire = getTireLoss(tire_percent)
 
     df.append(dict(Task=f"Stint {len(df) + 1}", start=last_stop_round, finish=current_round, current_fuel=fuel_percent, current_tire=tire_percent,
-              refueling_to=fuel_calculated, sec_lost_with_low_tire=sec_lost_with_low_tire, rounds_with_low_tire=rounds_with_low_tire))
+              refueling_to=fuel_calculated, sec_lost_with_low_tire=sec_lost_with_low_tire, rounds_with_low_tire=rounds_with_low_tire, fueled_time=(fuel_calculated - fuel_percent) / __l_per_sec__))
 
     fuel_percent = fuel_calculated
     tire_percent = 100
@@ -123,6 +118,13 @@ def makePlot(df):
     st.pyplot(plt)
 
 
+def prettyPrintDuration(seconds):
+    if seconds > 60:
+        return f"{int(seconds / 60)}m {int(seconds % 60)}s"
+    else:
+        return f"{int(seconds)}s"
+
+
 splits = []
 
 for i, strat in enumerate(strats):
@@ -141,7 +143,7 @@ for i, strat in enumerate(strats):
         fuel_percent -= fuel_per_round
         tire_percent -= tire_per_round
 
-        #print(f"End of round: {current_round} - fuel: {fuel_percent}/ tire: {tire_percent}")
+        # print(f"End of round: {current_round} - fuel: {fuel_percent}/ tire: {tire_percent}")
 
         # No pitstops in last round
         if current_round < overall_rounds:
@@ -172,32 +174,43 @@ for i, strat in enumerate(strats):
 
             # TODO add here the new fields added in the pitstop func
             df.append(dict(Task=f"Stint {len(df) + 1}", start=last_stop_round, finish=current_round, current_fuel=fuel_percent,
-                      current_tire=tire_percent, refueling_to=fuel_percent, sec_lost_with_low_tire=sec_lost_with_low_tire, rounds_with_low_tire=rounds_with_low_tire))
+                      current_tire=tire_percent, refueling_to=fuel_percent, sec_lost_with_low_tire=sec_lost_with_low_tire, rounds_with_low_tire=rounds_with_low_tire, fueled_time=(fuel_percent - fuel_percent) / __l_per_sec__))
 
             for i, stint in enumerate(df):
 
+                cur_fuel = stint.get('current_fuel')
+                fuel_to = stint.get('refueling_to')
+                cur_tire = stint.get('current_tire')
+
                 if i + 1 == len(df):
                     st.write(
-                        f"Finishing race with tire: {stint.get('current_tire')}% and fuel: {stint.get('current_fuel')}l")
+                        f"Finishing race with tire: {cur_tire}% and fuel: {cur_fuel}l")
+                elif i + 2 == len(df):
+                    st.write(
+                        f"{i+1}. stop in round {stint.get('finish')} with tire: {cur_tire}% and fuel: {cur_fuel}l / refuel to: {fuel_to}l | with 1 overlap: {fuel_to - 1 * fuel_per_round}l | with 2 overlaps: {fuel_to - 2 * fuel_per_round}l")
                 else:
                     st.write(
-                        f"{i+1}. stop in round {stint.get('finish')} with tire: {stint.get('current_tire')}% and fuel: {stint.get('current_fuel')}l / refuel to: {stint.get('refueling_to')}l")
+                        f"{i+1}. stop in round {stint.get('finish')} with tire: {cur_tire}% and fuel: {cur_fuel}l / refuel to: {fuel_to}l")
 
             racing_time = overall_rounds * round_duration_sec
             pitstop_time = len(df) * pit_stop_delta_time
             low_tire_loss = sum(
                 [elem.get('sec_lost_with_low_tire') for elem in df])
+            fuel_time_loss = sum(
+                [elem.get('fueled_time') for elem in df])
 
             st.text('')
             st.text('')
             st.subheader('Race duration:')
-            st.text(f"{overall_rounds} rounds = {racing_time}s")
-            st.text(f"{len(df)} pitstops = {pitstop_time}s")
             st.text(
-                f"{overall_rounds} seconds lost due to low tire = {round(low_tire_loss, 2)}s")
+                f"{overall_rounds} rounds = {prettyPrintDuration(racing_time)}")
+            st.text(
+                f"{len(df)} pitstops = {prettyPrintDuration(pitstop_time)} + fuel time: {prettyPrintDuration(fuel_time_loss)}")
+            st.text(
+                f"{prettyPrintDuration(low_tire_loss)} lost due to low tire.")
 
             st.text(
-                f"Overall duration: {int((racing_time + pitstop_time + low_tire_loss) / 60)}m {int((racing_time + pitstop_time + low_tire_loss) % 60)}sec")
+                f"Overall duration: {prettyPrintDuration(racing_time + pitstop_time + low_tire_loss + fuel_time_loss)}")
 
             # print(df)
 
