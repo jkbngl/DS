@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta, date
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import math
 
 st.set_page_config(
@@ -43,11 +44,11 @@ fuel_per_round = st.slider(
 round_duration_sec = st.slider(
     "How long does a round on good tires take [sec]", 0, 300, 51, help='Expected round duration in race pace')
 pit_stop_delta_time = st.slider(
-    "How much seconds are lost if you pit:", 0, 40, 20, help='The time from entering the pit lane until leaving it, in comparison if you drive the normal way')
+    "How much seconds are lost if you pit:", 0, 60, 20, help='The time from entering the pit lane until leaving it, in comparison if you drive the normal way')
 
 
 secs_lost_with_tires_low_per_round = st.slider(
-    "How much are you losing if you are driving on low tires [sec per round]", 0, 40, 5, help='In seconds, how much slower you can drive if you have bad tires (< 30 %)')
+    "How much are you losing if you are driving on low tires [sec per round]", 0, 40, 3, help='In seconds, how much slower you can drive if you have bad tires (< 30 %)')
 
 fuel_safety = st.number_input(
     "How much extra fuel to calculate for the last stint:", 1, 20, 4, help='How many litres of fuel should we safe calculate to have over at the end for unexpected reasons, e.g. sudden rain stop')
@@ -98,22 +99,39 @@ def makePlot(df):
 
     plotDf['days_start_to_end'] = plotDf.finish - plotDf.start
 
+    cmap = plt.cm.coolwarm
     fig, ax = plt.subplots(1, figsize=(16, 6))
     ax.barh(plotDf.Task, plotDf.days_start_to_end, left=plotDf.start)
 
-    plt.axvline(x=overall_rounds, color='r', linestyle='--')
+    plt.axvline(x=overall_rounds, color=cmap(1.), linestyle='--')
 
     for i, elem in enumerate(df):
 
         finish_round = elem.get('finish')
         rounds_with_low_tire = elem.get('rounds_with_low_tire')
+        current_fuel = elem.get('current_fuel')
+
+        if current_fuel <= 5:
+
+            """
+            4l fuel left
+            we show it with < 5l
+            l per round = 10
+            5-4 = 1 / 10 = 0.1 rounds
+            """
+
+            plt.axvline(x=finish_round - ((5 - current_fuel) / fuel_per_round),
+                        color=cmap(.5), linestyle='--')
 
         if rounds_with_low_tire > 0:
             plt.axvline(x=finish_round -
-                        rounds_with_low_tire, color='b', linestyle='--')
+                        rounds_with_low_tire, color=cmap(0.), linestyle='--')
 
-    ax.legend()
+    custom_lines = [Line2D([0], [0], color=cmap(0.), linestyle='--'),
+                    Line2D([0], [0], color=cmap(.5), linestyle='--'),
+                    Line2D([0], [0], color=cmap(1.), linestyle='--')]
 
+    ax.legend(custom_lines, ['Low tires', 'Fuel <= 5l', 'Finish Line'])
     # plt.show()
     st.pyplot(plt)
 
